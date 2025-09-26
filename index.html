@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="registrationApp">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <!-- AngularJS CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="app.js"></script>
+  <style>
+    form { max-width: 300px; margin: 20px auto; padding: 15px; border: 1px solid #ccc; }
+    label { display: block; margin-top: 10px; }
+    span { color: red; font-size: 12px; }
+    button { margin-top: 15px; }
+  </style>
+</head>
+<body ng-controller="RegistrationController">
+  <h2>User Registration</h2>
+  <form name="regForm" ng-submit="register()" novalidate>
+    
+    <label>Name:</label>
+    <input type="text" name="name" ng-model="user.name" required />
+    <span ng-show="regForm.name.$touched && regForm.name.$error.required">Name is required</span>
+    
+    <label>Email:</label>
+    <input type="email" name="email" ng-model="user.email" required />
+    <span ng-show="regForm.email.$touched && regForm.email.$error.required">Email is required</span>
+    <span ng-show="regForm.email.$error.email">Invalid email format</span>
+    
+    <label>Password:</label>
+    <input type="password" name="password" ng-model="user.password" required ng-minlength="6" />
+    <span ng-show="regForm.password.$touched && regForm.password.$error.required">Password is required</span>
+    <span ng-show="regForm.password.$error.minlength">Password must be at least 6 characters</span>
+    
+    <label>Confirm Password:</label>
+    <input type="password" name="confirmPassword" ng-model="user.confirmPassword" required />
+    <span ng-show="regForm.confirmPassword.$touched && regForm.confirmPassword.$error.required">Confirm password is required</span>
+    <span ng-show="user.password !== user.confirmPassword">Passwords do not match</span>
+    
+    <button type="submit" ng-disabled="regForm.$invalid || user.password !== user.confirmPassword">Register</button>
+  </form>
+</body>
+</html>
