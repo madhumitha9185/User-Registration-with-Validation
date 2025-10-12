@@ -1,42 +1,71 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="registrationApp">
+<html ng-app="userApp">
 <head>
   <meta charset="UTF-8">
-  <title>User Registration</title>
-  <!-- AngularJS CDN -->
+  <title>User Registration with Validation</title>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script src="app.js"></script>
   <style>
-    form { max-width: 300px; margin: 20px auto; padding: 15px; border: 1px solid #ccc; }
-    label { display: block; margin-top: 10px; }
-    span { color: red; font-size: 12px; }
-    button { margin-top: 15px; }
+    form {
+      width: 350px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input.ng-invalid.ng-touched { border-color: red; }
+    small { color: red; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 5px; text-align: left; }
   </style>
 </head>
-<body ng-controller="RegistrationController">
-  <h2>User Registration</h2>
-  <form name="regForm" ng-submit="register()" novalidate>
-    
-    <label>Name:</label>
-    <input type="text" name="name" ng-model="user.name" required />
-    <span ng-show="regForm.name.$touched && regForm.name.$error.required">Name is required</span>
-    
-    <label>Email:</label>
-    <input type="email" name="email" ng-model="user.email" required />
-    <span ng-show="regForm.email.$touched && regForm.email.$error.required">Email is required</span>
-    <span ng-show="regForm.email.$error.email">Invalid email format</span>
-    
-    <label>Password:</label>
-    <input type="password" name="password" ng-model="user.password" required ng-minlength="6" />
-    <span ng-show="regForm.password.$touched && regForm.password.$error.required">Password is required</span>
-    <span ng-show="regForm.password.$error.minlength">Password must be at least 6 characters</span>
-    
-    <label>Confirm Password:</label>
-    <input type="password" name="confirmPassword" ng-model="user.confirmPassword" required />
-    <span ng-show="regForm.confirmPassword.$touched && regForm.confirmPassword.$error.required">Confirm password is required</span>
-    <span ng-show="user.password !== user.confirmPassword">Passwords do not match</span>
-    
+<body ng-controller="userCtrl">
+
+  <h2 style="text-align:center;">User Registration Form</h2>
+
+  <form name="regForm" ng-submit="submitForm()" novalidate>
+
+    <label>Name:</label><br>
+    <input type="text" name="name" ng-model="user.name" required>
+    <small ng-show="regForm.name.$touched && regForm.name.$invalid">Name is required</small><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" ng-model="user.email" required>
+    <small ng-show="regForm.email.$touched && regForm.email.$invalid">Enter a valid email</small><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password" ng-model="user.password"
+           ng-pattern="/^(?=.*[A-Z])(?=.*\d).{6,}$/"
+           required>
+    <small ng-show="regForm.password.$touched && regForm.password.$error.required">Password is required</small>
+    <small ng-show="regForm.password.$error.pattern">Min 6 chars, 1 uppercase, 1 number</small><br><br>
+
+    <label>Confirm Password:</label><br>
+    <input type="password" name="confirm" ng-model="user.confirmPassword" required>
+    <small ng-show="regForm.confirm.$touched && user.confirmPassword !== user.password">Passwords do not match</small><br><br>
+
     <button type="submit" ng-disabled="regForm.$invalid || user.password !== user.confirmPassword">Register</button>
+
   </form>
+
+  <div ng-if="successMessage" style="text-align:center; color:green; margin-top:10px;">
+    {{successMessage}}
+  </div>
+
+  <!-- Registered Users Table -->
+  <div ng-if="users.length > 0" style="width:350px; margin:20px auto;">
+    <h3>Registered Users</h3>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+      <tr ng-repeat="u in users">
+        <td>{{u.name}}</td>
+        <td>{{u.email}}</td>
+      </tr>
+    </table>
+  </div>
+
 </body>
 </html>
